@@ -46,10 +46,9 @@ system_prompt = "Use tools to retrieve all information needed and respond in a p
 tools = []
 
 # You can use UDFs in Unity Catalog as agent tools
-uc_tool_names = ["agents_lab.product.*"]
+uc_tool_names = ["mfg_central.hackathon.*"]
 uc_toolkit = UCFunctionToolkit(function_names=uc_tool_names)
 tools.extend(uc_toolkit.tools)
-
 
 # # Use Databricks vector search index as tool
 # # See https://docs.databricks.com/generative-ai/agent-framework/unstructured-retrieval-tools.html

@@ -39,6 +39,8 @@ from databricks.sdk import WorkspaceClient
 import yaml
 import os
 
+catalog_name = "mfg_central"
+schema_name = "hackathon"
 
 # Use the workspace client to retrieve information about the current user
 w = WorkspaceClient()

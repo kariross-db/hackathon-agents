@@ -30,6 +30,24 @@
 
 # COMMAND ----------
 
+# TODO 
+# set your catalog and schema to match the rest of your work so that you save your model with your functions
+# Change the model name if desired
+# These will be used later in the notebook
+
+# Use the workspace client to retrieve information about the current user
+w = WorkspaceClient()
+user_email = w.current_user.me().display_name
+username = user_email.split("@")[0]
+
+catalog_name = "mfg_central"
+#catalog_name = f"{username}"
+schema_name = "hackathon"
+
+model_name = "product_agent"
+
+# COMMAND ----------
+
 # DBTITLE 1,Quick test to see if Agent works
 from agent import AGENT
 
@@ -185,6 +203,11 @@ scorers = [
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC This is where a lot of the evaluation magic starts to happen with MLFlow3.0 (released in June 2025)
+
+# COMMAND ----------
+
 print("Running evaluation...")
 with mlflow.start_run():
     results = mlflow.genai.evaluate(
@@ -212,17 +235,7 @@ import os
 
 mlflow.set_registry_uri("databricks-uc")
 
-# Use the workspace client to retrieve information about the current user
-w = WorkspaceClient()
-user_email = w.current_user.me().display_name
-username = user_email.split("@")[0]
-
-# Catalog and schema have been automatically created thanks to lab environment
-catalog_name = f"{username}"
-schema_name = "agents"
-
-# TODO: define the catalog, schema, and model name for your UC model
-model_name = "product_agent"
+# Catalog and schema have been automatically created earlier in this notebook, towards the top
 UC_MODEL_NAME = f"{catalog_name}.{schema_name}.{model_name}"
 
 # register the model to UC
@@ -234,6 +247,7 @@ from IPython.display import display, HTML
 
 # Retrieve the Databricks host URL
 workspace_url = spark.conf.get('spark.databricks.workspaceUrl')
+print(workspace_url)
 
 # Create HTML link to created agent
 html_link = f'<a href="https://{workspace_url}/explore/data/models/{catalog_name}/{schema_name}/product_agent" target="_blank">Go to Unity Catalog to see Registered Agent</a>'
@@ -245,6 +259,7 @@ display(HTML(html_link))
 # MAGIC ## Deploy the agent
 # MAGIC
 # MAGIC ##### Note: This is disabled for lab users but will work on your own workspace
+# MAGIC Note, when you use the agents.deploy(), this will create a feedback model and feedback app.  This app can be shared with stakeholders to provide feedback and help with the continued improvement of the agent 
 
 # COMMAND ----------
 
@@ -253,4 +268,8 @@ from databricks import agents
 # Deploy the model to the review app and a model serving endpoint
 
 #Disabled for the lab environment but we've deployed the agent already!
-#agents.deploy(UC_MODEL_NAME, uc_registered_model_info.version, tags = {"endpointSource": "Agent Lab"})
+agents.deploy(UC_MODEL_NAME, uc_registered_model_info.version, tags = {"endpointSource": "Agent Lab"})
+
+# COMMAND ----------
+
+
